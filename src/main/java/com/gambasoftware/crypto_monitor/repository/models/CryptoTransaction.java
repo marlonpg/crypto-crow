@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-public class CryptoHoldings {
+public class CryptoTransaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,8 +17,8 @@ public class CryptoHoldings {
 
     private String cryptoName;
     private String symbol;
-    private BigDecimal purchasePrice;
-    private BigDecimal amountBought;
+    private BigDecimal price;
+    private BigDecimal amount;
     private LocalDateTime purchaseDateTime = LocalDateTime.now();
 
     // Constructors, getters, and setters

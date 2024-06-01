@@ -1,8 +1,8 @@
 package com.gambasoftware.crypto_monitor.services;
 
-import com.gambasoftware.crypto_monitor.repository.CryptoHoldingsRepository;
+import com.gambasoftware.crypto_monitor.repository.CryptoTransactionRepository;
 import com.gambasoftware.crypto_monitor.repository.CryptoPriceRepository;
-import com.gambasoftware.crypto_monitor.repository.models.CryptoHoldings;
+import com.gambasoftware.crypto_monitor.repository.models.CryptoTransaction;
 import com.gambasoftware.crypto_monitor.repository.models.CryptoPrice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,24 +12,24 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CryptoHoldingsService {
+public class CryptoTransactionService {
 
     @Autowired
-    private CryptoHoldingsRepository cryptoHoldingsRepository;
+    private CryptoTransactionRepository cryptoTransactionRepository;
 
     @Autowired
     private CryptoPriceRepository cryptoPriceRepository;
 
-    public CryptoHoldings addCryptoHolding(CryptoHoldings cryptoHoldings) {
-        return cryptoHoldingsRepository.save(cryptoHoldings);
+    public CryptoTransaction add(CryptoTransaction cryptoTransaction) {
+        return cryptoTransactionRepository.save(cryptoTransaction);
     }
 
-    public List<CryptoHoldings> getAllCryptoHoldings() {
-        return cryptoHoldingsRepository.findAll();
+    public List<CryptoTransaction> getAllCryptoTransactions() {
+        return cryptoTransactionRepository.findAll();
     }
 
     public String calculateGainLoss(String symbol) {
-        CryptoHoldings holding = cryptoHoldingsRepository.findBySymbol(symbol)
+        CryptoTransaction holding = cryptoTransactionRepository.findBySymbol(symbol)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid holding id"));
 
         Optional<CryptoPrice> latestPrice = cryptoPriceRepository

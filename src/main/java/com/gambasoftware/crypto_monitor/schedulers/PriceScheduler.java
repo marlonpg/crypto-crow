@@ -2,8 +2,11 @@ package com.gambasoftware.crypto_monitor.schedulers;
 
 import com.gambasoftware.crypto_monitor.integrations.CoinMarketCapClient;
 import com.gambasoftware.crypto_monitor.integrations.models.CryptoDataDto;
+import com.gambasoftware.crypto_monitor.integrations.services.TelegramBotService;
 import com.gambasoftware.crypto_monitor.repository.models.CryptoPrice;
+import com.gambasoftware.crypto_monitor.repository.models.CryptoTransaction;
 import com.gambasoftware.crypto_monitor.services.CryptoPriceService;
+import com.gambasoftware.crypto_monitor.services.CryptoTransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,32 @@ public class PriceScheduler {
 
     @Autowired
     private CoinMarketCapClient coinMarketCapClient;
+
+    @Autowired
+    private TelegramBotService telegramBotService;
+
+    @Autowired
+    private CryptoTransactionService cryptoTransactionService;
+
+    @Scheduled(fixedRate = 60000) // Every minute
+    public void monitorPrices() {
+        List<CryptoTransaction> cryptoTransactions = cryptoTransactionService.getAllCryptoTransactions();
+        for (CryptoTransaction cryptoTransaction : cryptoTransactions) {
+            String gainLossPercent = cryptoTransactionService.calculateGainLoss(cryptoTransaction.getSymbol());
+            String message = String.format("The price of %s has changed %s", cryptoTransaction.getSymbol(), gainLossPercent);
+            telegramBotService.sendMessageToChannel(message);
+        }
+
+//        List<CryptoPrice> latestPrices = cryptoPriceRepository.findLatestPrices();
+//        for (CryptoPrice price : latestPrices) {
+//            BigDecimal currentPrice = price.getPrice();
+//            // Check if the price has changed significantly (you can define your own logic here)
+//            if (currentPrice.compareTo(price.getPreviousPrice()) != 0) {
+//                String message = String.format("The price of %s has changed to %s", price.getSymbol(), currentPrice);
+//                telegramBotService.sendMessageToChannel(message);
+//            }
+//        }
+    }
 
     //every minute / 60000 milliseconds
     @Scheduled(fixedRate = 90000)
