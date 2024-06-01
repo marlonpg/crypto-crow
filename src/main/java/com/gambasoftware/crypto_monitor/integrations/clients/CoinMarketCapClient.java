@@ -1,4 +1,4 @@
-package com.gambasoftware.crypto_monitor.integrations;
+package com.gambasoftware.crypto_monitor.integrations.clients;
 
 import com.gambasoftware.crypto_monitor.integrations.models.CoinMarketCapResponse;
 import com.gambasoftware.crypto_monitor.integrations.models.CryptoDataDto;

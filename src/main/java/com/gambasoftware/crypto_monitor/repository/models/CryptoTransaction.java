@@ -1,11 +1,11 @@
 package com.gambasoftware.crypto_monitor.repository.models;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,11 +17,12 @@ public class CryptoTransaction {
 
     private String cryptoName;
     private String symbol;
-    private BigDecimal price;
-    private BigDecimal amount;
+    @Column(nullable = false, scale=100)
+    private String price;
+    @Column(nullable = false, scale=100)
+    private String amount;
+    private String transactionType;
     private LocalDateTime purchaseDateTime = LocalDateTime.now();
-
-    // Constructors, getters, and setters
 
     public Long getId() {
         return id;
@@ -47,20 +48,28 @@ public class CryptoTransaction {
         this.symbol = symbol;
     }
 
-    public BigDecimal getPurchasePrice() {
-        return purchasePrice;
+    public String getPrice() {
+        return price;
     }
 
-    public void setPurchasePrice(BigDecimal purchasePrice) {
-        this.purchasePrice = purchasePrice;
+    public void setPrice(String price) {
+        this.price = price;
     }
 
-    public BigDecimal getAmountBought() {
-        return amountBought;
+    public String getAmount() {
+        return amount;
     }
 
-    public void setAmountBought(BigDecimal amountBought) {
-        this.amountBought = amountBought;
+    public void setAmount(String amount) {
+        this.amount = amount;
+    }
+
+    public String getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(String transactionType) {
+        this.transactionType = transactionType;
     }
 
     public LocalDateTime getPurchaseDateTime() {

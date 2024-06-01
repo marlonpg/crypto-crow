@@ -20,4 +20,5 @@ public class CryptoPriceService {
     public CryptoPrice save(CryptoPrice cryptoPrice) {
         return cryptoPriceRepository.save(cryptoPrice);
     }
+
 }

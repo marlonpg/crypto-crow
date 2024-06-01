@@ -6,7 +6,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -18,8 +17,8 @@ public class CryptoPrice {
     @Column(nullable = false)
     private String symbol;
 
-    @Column(nullable = false)
-    private BigDecimal price;
+    @Column(nullable = false, scale=100)
+    private String price;
 
     @Column(nullable = false)
     private LocalDateTime timestamp = LocalDateTime.now();
@@ -40,11 +39,11 @@ public class CryptoPrice {
         this.symbol = symbol;
     }
 
-    public BigDecimal getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 

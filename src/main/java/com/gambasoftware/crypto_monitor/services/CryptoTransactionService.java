@@ -28,6 +28,19 @@ public class CryptoTransactionService {
         return cryptoTransactionRepository.findAll();
     }
 
+    public CryptoTransaction delete(Long id){
+        CryptoTransaction deleted = cryptoTransactionRepository.getReferenceById(id);
+        CryptoTransaction object = new CryptoTransaction();
+        object.setAmount(deleted.getAmount());
+        object.setTransactionType(deleted.getTransactionType());
+        object.setPrice(deleted.getPrice());
+        object.setCryptoName(deleted.getCryptoName());
+        object.setSymbol(deleted.getSymbol());
+        object.setId(deleted.getId());
+        cryptoTransactionRepository.deleteById(id);
+        return object;
+    }
+
     public String calculateGainLoss(String symbol) {
         CryptoTransaction holding = cryptoTransactionRepository.findBySymbol(symbol)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid holding id"));
@@ -36,8 +49,8 @@ public class CryptoTransactionService {
                 .findFirstBySymbolOrderByTimestampDesc(holding.getSymbol());
 
         if (latestPrice.isPresent()) {
-            BigDecimal currentPrice = latestPrice.get().getPrice();
-            BigDecimal purchasePrice = holding.getPurchasePrice();
+            BigDecimal currentPrice = new BigDecimal(latestPrice.get().getPrice());
+            BigDecimal purchasePrice = new BigDecimal(holding.getPrice());
 
             BigDecimal priceDifference = currentPrice.subtract(purchasePrice);
             BigDecimal gainLossPercentage = priceDifference.divide(purchasePrice, 4, BigDecimal.ROUND_HALF_UP)
