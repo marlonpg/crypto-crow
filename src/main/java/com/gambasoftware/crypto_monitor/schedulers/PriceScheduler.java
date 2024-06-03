@@ -33,7 +33,7 @@ public class PriceScheduler {
     private CryptoTransactionService cryptoTransactionService;
 
     //every minute / 60000 milliseconds
-    //@Scheduled(fixedRate = 300000)
+    @Scheduled(fixedRate = 300000)
     public void recordPrices() {
         LOGGER.info("recordPrices triggered...");
         List<CryptoDataDto> cryptoDataList = coinMarketCapClient.getLatestCryptoData(100);
@@ -46,10 +46,11 @@ public class PriceScheduler {
 
             cryptoPriceService.save(cryptoPrice);
         }
+        LOGGER.info("recordPrices finished execution...");
     }
 
-    //every 10 minutes 600000
-    @Scheduled(fixedRate = 150000)
+    //every 5 minutes 300000
+    @Scheduled(fixedRate = 300000)
     public void monitorPrices() {
         LOGGER.info("monitorPrices triggered...");
         List<CryptoTransaction> cryptoTransactions = cryptoTransactionService.getAllCryptoTransactions();
@@ -58,6 +59,7 @@ public class PriceScheduler {
             String message = String.format("The price of %s has changed %s", cryptoTransaction.getSymbol(), gainLossPercent);
             telegramBotService.sendMessageToChannel(message);
         }
+        LOGGER.info("monitorPrices finished execution...");
 //        List<CryptoPrice> latestPrices = cryptoPriceService.findLatestPrices();
 //        for (CryptoPrice price : latestPrices) {
 //            BigDecimal currentPrice = price.getPrice();

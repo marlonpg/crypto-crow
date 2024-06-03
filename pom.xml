@@ -67,18 +67,38 @@
 		</dependency>
 	</dependencies>
 
+<!--	<build>-->
+<!--		<plugins>-->
+<!--			<plugin>-->
+<!--				<groupId>org.apache.maven.plugins</groupId>-->
+<!--				<artifactId>maven-compiler-plugin</artifactId>-->
+<!--				<version>3.13.0</version> &lt;!&ndash; or the version you are using &ndash;&gt;-->
+<!--				<configuration>-->
+<!--					<source>17</source>-->
+<!--					<target>17</target>-->
+<!--				</configuration>-->
+<!--			</plugin>-->
+<!--		</plugins>-->
+<!--	</build>-->
 	<build>
+
 		<plugins>
+			<!-- Spring Boot Maven Plugin -->
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.13.0</version> <!-- or the version you are using -->
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>2.6.4</version> <!-- Adjust to match your Spring Boot version -->
 				<configuration>
-					<source>17</source>
-					<target>17</target>
+					<mainClass>com.gambasoftware.crypto_monitor.CryptoMonitorApplication</mainClass> <!-- Replace with your main class -->
 				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
