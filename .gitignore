@@ -34,3 +34,6 @@ build/
 
 ### db data
 data
+
+### config data
+application-prd.properties

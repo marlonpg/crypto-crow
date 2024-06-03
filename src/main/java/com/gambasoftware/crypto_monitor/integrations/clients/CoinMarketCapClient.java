@@ -5,6 +5,7 @@ import com.gambasoftware.crypto_monitor.integrations.models.CryptoDataDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -23,7 +24,8 @@ public class CoinMarketCapClient {
     private RestTemplate restTemplate;
 
     private final String API_URL = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest";
-    private final String API_KEY = "1cd4a0da-128c-4a6c-bac2-3a61717bb7f9";
+    @Value("${coinmarketcap.apikey}")
+    private String API_KEY;
 
     public List<CryptoDataDto> getLatestCryptoData(int limit) {
         LOGGER.info("Calling coinMarketCap API");
