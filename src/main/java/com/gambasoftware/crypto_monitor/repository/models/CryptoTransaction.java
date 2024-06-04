@@ -23,6 +23,7 @@ public class CryptoTransaction {
     private String amount;
     private String transactionType;
     private LocalDateTime purchaseDateTime = LocalDateTime.now();
+    private String userId;
 
     public Long getId() {
         return id;
@@ -78,5 +79,13 @@ public class CryptoTransaction {
 
     public void setPurchaseDateTime(LocalDateTime purchaseDateTime) {
         this.purchaseDateTime = purchaseDateTime;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

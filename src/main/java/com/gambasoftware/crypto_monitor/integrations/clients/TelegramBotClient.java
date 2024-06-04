@@ -1,4 +1,4 @@
-package com.gambasoftware.crypto_monitor.integrations.services;
+package com.gambasoftware.crypto_monitor.integrations.clients;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,8 +10,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Service
-public class TelegramBotService extends TelegramLongPollingBot {
-    private final static Logger LOGGER = LoggerFactory.getLogger(TelegramBotService.class);
+public class TelegramBotClient extends TelegramLongPollingBot {
+    private final static Logger LOGGER = LoggerFactory.getLogger(TelegramBotClient.class);
 
     @Value("${telegram.bot.username}")
     private String botUsername;
@@ -37,6 +37,7 @@ public class TelegramBotService extends TelegramLongPollingBot {
 
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
+            messageText+=" @"+update.getMessage().getFrom().getUserName();
             LOGGER.info("Receiving something from BOT "+ messageText);
             // Send a response (optional)
             sendMessageToChannel(messageText);

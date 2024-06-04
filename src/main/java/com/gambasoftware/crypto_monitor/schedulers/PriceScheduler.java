@@ -2,7 +2,7 @@ package com.gambasoftware.crypto_monitor.schedulers;
 
 import com.gambasoftware.crypto_monitor.integrations.clients.CoinMarketCapClient;
 import com.gambasoftware.crypto_monitor.integrations.models.CryptoDataDto;
-import com.gambasoftware.crypto_monitor.integrations.services.TelegramBotService;
+import com.gambasoftware.crypto_monitor.integrations.clients.TelegramBotClient;
 import com.gambasoftware.crypto_monitor.repository.models.CryptoPrice;
 import com.gambasoftware.crypto_monitor.repository.models.CryptoTransaction;
 import com.gambasoftware.crypto_monitor.services.CryptoPriceService;
@@ -27,7 +27,7 @@ public class PriceScheduler {
     private CoinMarketCapClient coinMarketCapClient;
 
     @Autowired
-    private TelegramBotService telegramBotService;
+    private TelegramBotClient telegramBotClient;
 
     @Autowired
     private CryptoTransactionService cryptoTransactionService;
@@ -57,7 +57,7 @@ public class PriceScheduler {
         for (CryptoTransaction cryptoTransaction : cryptoTransactions) {
             String gainLossPercent = cryptoTransactionService.calculateGainLoss(cryptoTransaction.getSymbol());
             String message = String.format("The price of %s has changed %s", cryptoTransaction.getSymbol(), gainLossPercent);
-            telegramBotService.sendMessageToChannel(message);
+            telegramBotClient.sendMessageToChannel(message);
         }
         LOGGER.info("monitorPrices finished execution...");
 //        List<CryptoPrice> latestPrices = cryptoPriceService.findLatestPrices();
