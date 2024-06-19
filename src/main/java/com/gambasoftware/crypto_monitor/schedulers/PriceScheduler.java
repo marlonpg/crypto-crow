@@ -1,12 +1,13 @@
 package com.gambasoftware.crypto_monitor.schedulers;
 
 import com.gambasoftware.crypto_monitor.integrations.clients.CoinMarketCapClient;
+import com.gambasoftware.crypto_monitor.integrations.clients.StocksApiClient;
 import com.gambasoftware.crypto_monitor.integrations.models.CryptoDataDto;
 import com.gambasoftware.crypto_monitor.integrations.clients.TelegramBotClient;
-import com.gambasoftware.crypto_monitor.repository.models.CryptoPrice;
-import com.gambasoftware.crypto_monitor.repository.models.CryptoTransaction;
-import com.gambasoftware.crypto_monitor.services.CryptoPriceService;
-import com.gambasoftware.crypto_monitor.services.CryptoTransactionService;
+import com.gambasoftware.crypto_monitor.repository.models.AssetPrice;
+import com.gambasoftware.crypto_monitor.repository.models.Transaction;
+import com.gambasoftware.crypto_monitor.services.AssetPriceService;
+import com.gambasoftware.crypto_monitor.services.TransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class PriceScheduler {
     private static final Logger LOGGER = LoggerFactory.getLogger(PriceScheduler.class);
 
     @Autowired
-    private CryptoPriceService cryptoPriceService;
+    private AssetPriceService assetPriceService;
 
     @Autowired
     private CoinMarketCapClient coinMarketCapClient;
@@ -30,33 +31,53 @@ public class PriceScheduler {
     private TelegramBotClient telegramBotClient;
 
     @Autowired
-    private CryptoTransactionService cryptoTransactionService;
+    private TransactionService transactionService;
+
+    @Autowired
+    private StocksApiClient stocksApiClient;
 
     //every minute / 60000 milliseconds
     @Scheduled(fixedRate = 300000)
-    public void recordPrices() {
-        LOGGER.info("recordPrices triggered...");
+    public void recordCryptoPrices() {
+        LOGGER.info("recordCryptoPrices triggered...");
         List<CryptoDataDto> cryptoDataList = coinMarketCapClient.getLatestCryptoData(100);
 
         for (CryptoDataDto cryptoData : cryptoDataList) {
-            CryptoPrice cryptoPrice = new CryptoPrice();
-            cryptoPrice.setSymbol(cryptoData.getSymbol());
-            cryptoPrice.setPrice(cryptoData.getQuote().getUsd().getPrice().toPlainString());
-            cryptoPrice.setTimestamp(LocalDateTime.now());
+            AssetPrice assetPrice = new AssetPrice();
+            assetPrice.setSymbol(cryptoData.getSymbol());
+            assetPrice.setPrice(cryptoData.getQuote().getUsd().getPrice().toPlainString());
+            assetPrice.setTimestamp(LocalDateTime.now());
 
-            cryptoPriceService.save(cryptoPrice);
+            assetPriceService.save(assetPrice);
         }
-        LOGGER.info("recordPrices finished execution...");
+        LOGGER.info("recordCryptoPrices finished execution...");
+    }
+
+    @Scheduled(fixedRate = 60000)
+    public void recordStockPrices() {
+        LOGGER.info("recordStockPrices triggered...");
+        List<String> stocks = assetPriceService.findAllStocks();
+
+        for (String stock : stocks) {
+            String price = stocksApiClient.getStockPrice(stock);
+            AssetPrice assetPrice = new AssetPrice();
+            assetPrice.setSymbol(stock);
+            assetPrice.setPrice(price);
+            assetPrice.setTimestamp(LocalDateTime.now());
+
+            assetPriceService.save(assetPrice);
+        }
+        LOGGER.info("recordStockPrices finished execution...");
     }
 
     //every 5 minutes 300000
     @Scheduled(fixedRate = 300000)
     public void monitorPrices() {
         LOGGER.info("monitorPrices triggered...");
-        List<CryptoTransaction> cryptoTransactions = cryptoTransactionService.getAllCryptoTransactions();
-        for (CryptoTransaction cryptoTransaction : cryptoTransactions) {
-            String gainLossPercent = cryptoTransactionService.calculateGainLoss(cryptoTransaction.getSymbol());
-            String message = String.format("The price of %s has changed %s", cryptoTransaction.getSymbol(), gainLossPercent);
+        List<Transaction> transactions = transactionService.getAllTransactions();
+        for (Transaction transaction : transactions) {
+            String gainLossPercent = transactionService.calculateGainLoss(transaction.getSymbol());
+            String message = String.format("The price of %s has changed %s", transaction.getSymbol(), gainLossPercent);
             telegramBotClient.sendMessageToChannel(message);
         }
         LOGGER.info("monitorPrices finished execution...");

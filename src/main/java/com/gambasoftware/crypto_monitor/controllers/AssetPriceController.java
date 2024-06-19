@@ -1,7 +1,7 @@
 package com.gambasoftware.crypto_monitor.controllers;
 
-import com.gambasoftware.crypto_monitor.repository.models.CryptoPrice;
-import com.gambasoftware.crypto_monitor.services.CryptoPriceService;
+import com.gambasoftware.crypto_monitor.repository.models.AssetPrice;
+import com.gambasoftware.crypto_monitor.services.AssetPriceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,18 +13,18 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/cryptos")
-public class CryptoPriceController {
+public class AssetPriceController {
 
     @Autowired
-    private CryptoPriceService cryptoPriceService;
+    private AssetPriceService assetPriceService;
 
     @GetMapping
-    public List<CryptoPrice> getAllCryptoPrices() {
-        return cryptoPriceService.findAll();
+    public List<AssetPrice> getAllAssetPrices() {
+        return assetPriceService.findAll();
     }
 
     @PostMapping
-    public CryptoPrice createCryptoPrice(@RequestBody CryptoPrice cryptoPrice) {
-        return cryptoPriceService.save(cryptoPrice);
+    public AssetPrice addAssetPrice(@RequestBody AssetPrice assetPrice) {
+        return assetPriceService.save(assetPrice);
     }
 }

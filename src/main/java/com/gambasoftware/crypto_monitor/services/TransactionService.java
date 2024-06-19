@@ -1,9 +1,9 @@
 package com.gambasoftware.crypto_monitor.services;
 
-import com.gambasoftware.crypto_monitor.repository.CryptoTransactionRepository;
-import com.gambasoftware.crypto_monitor.repository.CryptoPriceRepository;
-import com.gambasoftware.crypto_monitor.repository.models.CryptoTransaction;
-import com.gambasoftware.crypto_monitor.repository.models.CryptoPrice;
+import com.gambasoftware.crypto_monitor.repository.TransactionRepository;
+import com.gambasoftware.crypto_monitor.repository.AssetPriceRepository;
+import com.gambasoftware.crypto_monitor.repository.models.Transaction;
+import com.gambasoftware.crypto_monitor.repository.models.AssetPrice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,40 +12,39 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CryptoTransactionService {
+public class TransactionService {
 
     @Autowired
-    private CryptoTransactionRepository cryptoTransactionRepository;
+    private TransactionRepository transactionRepository;
 
     @Autowired
-    private CryptoPriceRepository cryptoPriceRepository;
+    private AssetPriceRepository assetPriceRepository;
 
-    public CryptoTransaction add(CryptoTransaction cryptoTransaction) {
-        return cryptoTransactionRepository.save(cryptoTransaction);
+    public Transaction add(Transaction transaction) {
+        return transactionRepository.save(transaction);
     }
 
-    public List<CryptoTransaction> getAllCryptoTransactions() {
-        return cryptoTransactionRepository.findAll();
+    public List<Transaction> getAllTransactions() {
+        return transactionRepository.findAll();
     }
 
-    public CryptoTransaction delete(Long id){
-        CryptoTransaction deleted = cryptoTransactionRepository.getReferenceById(id);
-        CryptoTransaction object = new CryptoTransaction();
+    public Transaction delete(Long id){
+        Transaction deleted = transactionRepository.getReferenceById(id);
+        Transaction object = new Transaction();
         object.setAmount(deleted.getAmount());
         object.setTransactionType(deleted.getTransactionType());
         object.setPrice(deleted.getPrice());
-        object.setCryptoName(deleted.getCryptoName());
         object.setSymbol(deleted.getSymbol());
         object.setId(deleted.getId());
-        cryptoTransactionRepository.deleteById(id);
+        transactionRepository.deleteById(id);
         return object;
     }
 
     public String calculateGainLoss(String symbol) {
-        CryptoTransaction holding = cryptoTransactionRepository.findBySymbol(symbol)
+        Transaction holding = transactionRepository.findBySymbol(symbol)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid holding id"));
 
-        Optional<CryptoPrice> latestPrice = cryptoPriceRepository
+        Optional<AssetPrice> latestPrice = assetPriceRepository
                 .findFirstBySymbolOrderByTimestampDesc(holding.getSymbol());
 
         if (latestPrice.isPresent()) {
@@ -58,7 +57,7 @@ public class CryptoTransactionService {
 
             return gainLossPercentage.setScale(2, BigDecimal.ROUND_HALF_UP) + "%";
         } else {
-            throw new RuntimeException("Could not find current price for " + holding.getCryptoName());
+            throw new RuntimeException("Could not find current price for " + holding.getSymbol());
         }
     }
 }

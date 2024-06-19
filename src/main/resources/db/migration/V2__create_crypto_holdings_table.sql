@@ -2,7 +2,6 @@
 
 CREATE TABLE crypto_holdings (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    crypto_name VARCHAR(100) NOT NULL,
     symbol VARCHAR(100) NOT NULL,
     price VARCHAR(100) NOT NULL,
     amount VARCHAR(100) NOT NULL,

@@ -5,17 +5,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
 
 @Entity
-public class CryptoTransaction {
+@Table(name = "transactions")
+public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String cryptoName;
     private String symbol;
     @Column(nullable = false, scale=100)
     private String price;
@@ -24,6 +24,7 @@ public class CryptoTransaction {
     private String transactionType;
     private LocalDateTime purchaseDateTime = LocalDateTime.now();
     private String userId;
+    private String assetType;
 
     public Long getId() {
         return id;
@@ -31,14 +32,6 @@ public class CryptoTransaction {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getCryptoName() {
-        return cryptoName;
-    }
-
-    public void setCryptoName(String cryptoName) {
-        this.cryptoName = cryptoName;
     }
 
     public String getSymbol() {
@@ -87,5 +80,13 @@ public class CryptoTransaction {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getAssetType() {
+        return assetType;
+    }
+
+    public void setAssetType(String assetType) {
+        this.assetType = assetType;
     }
 }
