@@ -2,11 +2,12 @@ package com.gambasoftware.crypto_monitor.schedulers;
 
 import com.gambasoftware.crypto_monitor.integrations.clients.CoinMarketCapClient;
 import com.gambasoftware.crypto_monitor.integrations.clients.StocksApiClient;
-import com.gambasoftware.crypto_monitor.integrations.models.CryptoDataDto;
 import com.gambasoftware.crypto_monitor.integrations.clients.TelegramBotClient;
+import com.gambasoftware.crypto_monitor.integrations.models.CryptoDataDto;
 import com.gambasoftware.crypto_monitor.repository.models.AssetPrice;
 import com.gambasoftware.crypto_monitor.repository.models.Transaction;
 import com.gambasoftware.crypto_monitor.services.AssetPriceService;
+import com.gambasoftware.crypto_monitor.services.PriceMonitorService;
 import com.gambasoftware.crypto_monitor.services.TransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,7 +38,10 @@ public class PriceScheduler {
     @Autowired
     private StocksApiClient stocksApiClient;
 
-    //every minute / 60000 milliseconds
+    @Autowired
+    private PriceMonitorService priceMonitorService;
+
+    //every 5 minutes / 300000 milliseconds
     @Scheduled(fixedRate = 300000)
     public void recordCryptoPrices() {
         LOGGER.info("recordCryptoPrices triggered...");
@@ -49,11 +54,12 @@ public class PriceScheduler {
             assetPrice.setTimestamp(LocalDateTime.now());
 
             assetPriceService.save(assetPrice);
+            priceMonitorService.handleNewPrice(cryptoData.getSymbol(), new BigDecimal(cryptoData.getQuote().getUsd().getPrice().toPlainString()));
         }
         LOGGER.info("recordCryptoPrices finished execution...");
     }
 
-    @Scheduled(fixedRate = 60000)
+    //@Scheduled(fixedRate = 300000)
     public void recordStockPrices() {
         LOGGER.info("recordStockPrices triggered...");
         List<String> stocks = assetPriceService.findAllStocks();
@@ -71,7 +77,7 @@ public class PriceScheduler {
     }
 
     //every 5 minutes 300000
-    @Scheduled(fixedRate = 300000)
+    //@Scheduled(fixedRate = 300000)
     public void monitorPrices() {
         LOGGER.info("monitorPrices triggered...");
         List<Transaction> transactions = transactionService.getAllTransactions();
